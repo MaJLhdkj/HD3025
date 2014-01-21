@@ -48,6 +48,7 @@ void CParaSetDlg::OnSize(UINT nType, int cx, int cy)
 		SizeAdj.OnSizeAdjust(ParaSetDlgRect,this,cx,cy);
 	}
 }
+///////////////////////////////////////////////
 
 HFONT hFont;
 BOOL CParaSetDlg::OnInitDialog()
