@@ -35,7 +35,7 @@ END_MESSAGE_MAP()
 
 // CSolidDlg 消息处理程序
 
-
+//////////////////////
 void CSolidDlg::OnSize(UINT nType, int cx, int cy)
 {
 	CDialogEx::OnSize(nType, cx, cy);
