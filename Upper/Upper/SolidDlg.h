@@ -25,3 +25,4 @@ public:
 	CFont m_SolidFont2;
 	CFont m_SolidFont3;
 };
+////////////////////////////
