@@ -51,4 +51,5 @@
 #endif
 #endif
 
-
+#include "SkinMagicLib.h"
+#pragma comment(lib,"SkinMagic.lib")
