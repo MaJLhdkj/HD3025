@@ -4,7 +4,6 @@
 
 #pragma once
 
-
 // CUpperCtrlDlg ¶Ô»°¿ò
 class CUpperCtrlDlg : public CDialogEx
 {
