@@ -14,7 +14,7 @@
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
-class CAboutDlg : public CDialog
+class CAboutDlg : public CDialogEx
 {
 public:
 	CAboutDlg();
@@ -30,16 +30,16 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
+CAboutDlg::CAboutDlg() : CDialogEx(CAboutDlg::IDD)
 {
 }
 
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	CDialogEx::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
+BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 
@@ -48,17 +48,17 @@ END_MESSAGE_MAP()
 
 
 CUpperCtrlDlg::CUpperCtrlDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CUpperCtrlDlg::IDD, pParent)
+	: CDialogEx(CUpperCtrlDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
 void CUpperCtrlDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	CDialogEx::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CUpperCtrlDlg, CDialog)
+BEGIN_MESSAGE_MAP(CUpperCtrlDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
@@ -69,7 +69,7 @@ END_MESSAGE_MAP()
 
 BOOL CUpperCtrlDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+	CDialogEx::OnInitDialog();
 
 	// 将“关于...”菜单项添加到系统菜单中。
 
@@ -110,7 +110,7 @@ void CUpperCtrlDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 	else
 	{
-		CDialog::OnSysCommand(nID, lParam);
+		CDialogEx::OnSysCommand(nID, lParam);
 	}
 }
 
@@ -139,7 +139,7 @@ void CUpperCtrlDlg::OnPaint()
 	}
 	else
 	{
-		CDialog::OnPaint();
+		CDialogEx::OnPaint();
 	}
 }
 

@@ -6,7 +6,7 @@
 
 
 // CUpperCtrlDlg 对话框
-class CUpperCtrlDlg : public CDialog
+class CUpperCtrlDlg : public CDialogEx
 {
 // 构造
 public:
