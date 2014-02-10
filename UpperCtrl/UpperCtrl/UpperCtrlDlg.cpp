@@ -12,6 +12,8 @@
 #endif
 
 
+CRect DlgRect;
+extern CRect TabCtrlRect;
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
 class CAboutDlg : public CDialogEx
@@ -63,6 +65,8 @@ BEGIN_MESSAGE_MAP(CUpperCtrlDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_WM_SIZE()
+	ON_WM_GETMINMAXINFO()
 END_MESSAGE_MAP()
 
 
@@ -98,12 +102,30 @@ BOOL CUpperCtrlDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
+	//GetClientRect(DlgRect);
 	//向TAB控件中添加4个分页
 	m_TabCtrl.InsertItem(0,"固体测量",0);
 	m_TabCtrl.InsertItem(1,"液体测量",1);
 	m_TabCtrl.InsertItem(2,"参数设置",2);
 	m_TabCtrl.InsertItem(3,"仪器校验",3);
 	m_TabCtrl.InsertItem(4,"数据查询",4);
+	//获得tab控件窗口大小
+	m_TabCtrl.GetClientRect(TabCtrlRect);
+	//在tab上创建5个子对话框
+	m_SolidDlg.Create(IDD_DLG_SOLID,&m_TabCtrl);
+	m_LiquidDlg.Create(IDD_DLG_LIQUID,&m_TabCtrl);
+	m_ParaSetDlg.Create(IDD_DLG_PARASET,&m_TabCtrl);
+	m_CheckDlg.Create(IDD_DLG_CHECK,&m_TabCtrl);
+	m_DataQueryDlg.Create(IDD_DLG_DATAQUERY,&m_TabCtrl);
+	//子对话框与tab对齐
+	m_SolidDlg.MoveWindow(TabCtrlRect);
+	m_LiquidDlg.MoveWindow(TabCtrlRect);
+	m_ParaSetDlg.MoveWindow(TabCtrlRect);
+	m_CheckDlg.MoveWindow(TabCtrlRect);
+	m_DataQueryDlg.MoveWindow(TabCtrlRect);
+	//
+	m_SolidDlg.ShowWindow(SW_SHOW);
+
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -156,3 +178,25 @@ HCURSOR CUpperCtrlDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+void CUpperCtrlDlg::OnSize(UINT nType, int cx, int cy)
+{
+	CDialogEx::OnSize(nType, cx, cy);
+
+	// TODO: 在此处添加消息处理程序代码
+	CSizeAdjust SizeAdj;
+	SizeAdj.OnSizeAdjust(DlgRect,this,cx,cy);
+}
+
+
+void CUpperCtrlDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	int x=::GetSystemMetrics(SM_CXSCREEN)*0.4;
+	int y=::GetSystemMetrics(SM_CYSCREEN)*0.4;
+	//限制一下最小窗口
+	lpMMI->ptMinTrackSize.x=x;
+	lpMMI->ptMinTrackSize.y=y;
+	CDialogEx::OnGetMinMaxInfo(lpMMI);
+}

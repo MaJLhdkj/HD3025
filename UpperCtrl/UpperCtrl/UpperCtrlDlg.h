@@ -4,7 +4,13 @@
 
 #pragma once
 #include "afxcmn.h"
-
+#include "NewTabCtrl.h"
+#include "SolidDlg.h"
+#include "LiquidDlg.h"
+#include "CheckDlg.h"
+#include "ParaSetDlg.h"
+#include "DataQueryDlg.h"
+#include "SizeAdjust.h"
 // CUpperCtrlDlg ¶Ô»°¿ò
 class CUpperCtrlDlg : public CDialogEx
 {
@@ -30,5 +36,12 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	CTabCtrl m_TabCtrl;
+	CNewTabCtrl m_TabCtrl;
+	CSolidDlg m_SolidDlg;
+	CLiquidDlg m_LiquidDlg;
+	CParaSetDlg m_ParaSetDlg;
+	CCheckDlg m_CheckDlg;
+	CDataQueryDlg m_DataQueryDlg;
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 };
