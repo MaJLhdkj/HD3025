@@ -56,6 +56,7 @@ CUpperCtrlDlg::CUpperCtrlDlg(CWnd* pParent /*=NULL*/)
 void CUpperCtrlDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_TAB1, m_TabCtrl);
 }
 
 BEGIN_MESSAGE_MAP(CUpperCtrlDlg, CDialogEx)
@@ -97,7 +98,12 @@ BOOL CUpperCtrlDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
-
+	//向TAB控件中添加4个分页
+	m_TabCtrl.InsertItem(0,"固体测量",0);
+	m_TabCtrl.InsertItem(1,"液体测量",1);
+	m_TabCtrl.InsertItem(2,"参数设置",2);
+	m_TabCtrl.InsertItem(3,"仪器校验",3);
+	m_TabCtrl.InsertItem(4,"数据查询",4);
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
