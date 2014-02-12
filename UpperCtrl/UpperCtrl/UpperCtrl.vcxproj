@@ -136,6 +136,8 @@
     <None Include="res\UpperCtrl.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\HD3025.ico" />
+    <Image Include="res\HD3025.ico" />
     <Image Include="res\UpperCtrl.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

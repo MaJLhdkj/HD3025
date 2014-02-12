@@ -44,4 +44,13 @@ public:
 	CDataQueryDlg m_DataQueryDlg;
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
+	afx_msg void OnBnClickedButton1();
+	afx_msg void OnBnClickedButton2();
+	afx_msg void OnBnClickedButton3();
+	afx_msg void OnBnClickedButton4();
+	afx_msg void OnBnClickedButton5();
+	CFont m_DlgFont;
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
+//	CFont m_DlgFont1;
+	CStatusBar  m_StausBar;
 };

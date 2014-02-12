@@ -107,3 +107,11 @@ BOOL CUpperCtrlApp::InitInstance()
 	return FALSE;
 }
 
+
+
+int CUpperCtrlApp::ExitInstance()
+{
+	// TODO: 在此添加专用代码和/或调用基类
+	ExitSkinMagicLib();
+	return CWinApp::ExitInstance();
+}
