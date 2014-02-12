@@ -67,12 +67,9 @@ BEGIN_MESSAGE_MAP(CUpperCtrlDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
-	ON_BN_CLICKED(IDC_BUTTON1, &CUpperCtrlDlg::OnBnClickedButton1)
-	ON_BN_CLICKED(IDC_BUTTON2, &CUpperCtrlDlg::OnBnClickedButton2)
-	ON_BN_CLICKED(IDC_BUTTON3, &CUpperCtrlDlg::OnBnClickedButton3)
-	ON_BN_CLICKED(IDC_BUTTON4, &CUpperCtrlDlg::OnBnClickedButton4)
-	ON_BN_CLICKED(IDC_BUTTON5, &CUpperCtrlDlg::OnBnClickedButton5)
 	ON_WM_TIMER()
+	ON_BN_CLICKED(IDC_BTN_DLG1, &CUpperCtrlDlg::OnBnClickedBtnDlg1)
+	ON_BN_CLICKED(IDC_BTN_DLG5, &CUpperCtrlDlg::OnBnClickedBtnDlg5)
 END_MESSAGE_MAP()
 
 
@@ -108,7 +105,7 @@ BOOL CUpperCtrlDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
-	//GetClientRect(DlgRect);
+	GetClientRect(DlgRect);
 	//向TAB控件中添加4个分页
 	m_TabCtrl.InsertItem(0,"固体测量",0);
 	m_TabCtrl.InsertItem(1,"液体测量",1);
@@ -129,14 +126,14 @@ BOOL CUpperCtrlDlg::OnInitDialog()
 	m_ParaSetDlg.MoveWindow(TabCtrlRect);
 	m_CheckDlg.MoveWindow(TabCtrlRect);
 	m_DataQueryDlg.MoveWindow(TabCtrlRect);
-	//
-	m_SolidDlg.ShowWindow(SW_SHOW);
+	//将参数设置界面设为默认界面
+	m_ParaSetDlg.ShowWindow(SW_SHOW);
 	//设置按钮字体
 	m_DlgFont.CreatePointFont(120,"微软雅黑");
 	//m_DlgFont1.CreatePointFont(100,"微软雅黑");
 	for (int i=0;i<5;i++)
 	{
-		GetDlgItem(IDC_BUTTON1+i)->SetFont(&m_DlgFont);
+		GetDlgItem(IDC_BTN_DLG1+i)->SetFont(&m_DlgFont);
 	}
 	m_DlgFont.Detach();
 	m_DlgFont.CreatePointFont(100,"微软雅黑");
@@ -153,18 +150,47 @@ BOOL CUpperCtrlDlg::OnInitDialog()
 	//初始化窗口时设置3个小按钮不可见
 	for (int i=0;i<3;i++)
 	{
-		(CButton*)GetDlgItem(IDC_BUTTON6+i)->ShowWindow(SW_HIDE);
+		(CButton*)GetDlgItem(IDC_BTN_DLG6+i)->ShowWindow(SW_HIDE);
 	}
 	//创建状态栏
 	m_StausBar.Create(this);
-	const UINT nIDS[4]={2016,2017,2018,2019};
-	m_StausBar.SetIndicators(nIDS,4);
-	m_StausBar.SetPaneInfo(0,nIDS[0],SBPS_NORMAL,200);
+	const UINT nIDS[3]={2016,2017,2018};
+	m_StausBar.SetIndicators(nIDS,3);
+	m_StausBar.SetPaneInfo(0,nIDS[0],SBPS_NORMAL,100);
 	m_StausBar.SetPaneInfo(1,nIDS[1],SBPS_NORMAL,200);
 	m_StausBar.SetPaneInfo(2,nIDS[2],SBPS_NORMAL,200);
-	m_StausBar.SetPaneInfo(3,nIDS[3],SBPS_NORMAL,200);
-	//m_StausBar.SetPaneText(0,"远程控制状态：");
+//	m_StausBar.SetPaneInfo(3,nIDS[3],SBPS_NORMAL,200);
+	m_StausBar.SetPaneText(0,"当前状态：");
+	m_StausBar.SetPaneText(1,"远程控制未连接");
 	RepositionBars(AFX_IDW_CONTROLBAR_FIRST,AFX_IDW_CONTROLBAR_LAST,0);
+	//检测软件是否第一次使用，不是的话读取配置数据，否则将第一次标志置0
+	char str[128]={0};
+	::GetPrivateProfileString("Flag",
+		"FirstStatus",
+		NULL,
+		str,
+		10,
+		".\\Init.ini");
+	if (str[0]=='0')
+	{
+		TRACE("读取配置数据\r\n");
+	}
+	else
+	{
+		::WritePrivateProfileString("Flag",
+			"FirstStatus",
+			"0",
+			".\\Init.ini");
+		::WritePrivateProfileString("Data",
+			"DataNumber",
+			"000000",
+			".\\Init.ini");
+		TRACE("软件第一次使用\r\n");
+	}
+	//
+
+
+
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -206,22 +232,22 @@ void CUpperCtrlDlg::OnPaint()
 	}
 	else
 	{
-		CPaintDC dc(this); 
-		CRect rect;
-		GetClientRect(rect);
-		CFont myFont,*OldFont;
-		LOGFONT font;
-		memset(&font,0,sizeof(LOGFONT));
-		font.lfHeight=rect.Height()*0.06;
-		font.lfWidth=rect.Width()*0.02;
-		strcpy(font.lfFaceName,"黑体");
-		myFont.CreateFontIndirect(&font);
-		OldFont=dc.SelectObject(&myFont);
-		dc.SetBkMode(TRANSPARENT);
-		dc.SetTextColor(RGB(0,38,142));
-		dc.TextOut(rect.Width()*0.3,rect.Height()*0.03,"HD3025上位机控制系统");
-		dc.SelectObject(OldFont);
-		UpdateWindow();
+// 		CPaintDC dc(this); 
+// 		CRect rect;
+// 		GetClientRect(rect);
+// 		CFont myFont,*OldFont;
+// 		LOGFONT font;
+// 		memset(&font,0,sizeof(LOGFONT));
+// 		font.lfHeight=rect.Height()*0.06;
+// 		font.lfWidth=rect.Width()*0.02;
+// 		strcpy(font.lfFaceName,"黑体");
+// 		myFont.CreateFontIndirect(&font);
+// 		OldFont=dc.SelectObject(&myFont);
+// 		dc.SetBkMode(TRANSPARENT);
+// 		dc.SetTextColor(RGB(0,38,142));
+// 		dc.TextOut(rect.Width()*0.3,rect.Height()*0.03,"HD3025上位机控制系统");
+// 		dc.SelectObject(OldFont);
+// 		//UpdateWindow();
 		CDialogEx::OnPaint();
 	}
 }
@@ -258,89 +284,6 @@ void CUpperCtrlDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	lpMMI->ptMinTrackSize.y=y;
 	CDialogEx::OnGetMinMaxInfo(lpMMI);
 }
-
-
-void CUpperCtrlDlg::OnBnClickedButton1()
-{
-	// TODO: 在此添加控件通知处理程序代码
-	m_SolidDlg.ShowWindow(SW_SHOW);
-	m_LiquidDlg.ShowWindow(SW_HIDE);
-	m_ParaSetDlg.ShowWindow(SW_HIDE);
-	m_CheckDlg.ShowWindow(SW_HIDE);
-	m_DataQueryDlg.ShowWindow(SW_HIDE);
-	//设置3个小按钮不可见
-	for (int i=0;i<3;i++)
-	{
-		(CButton*)GetDlgItem(IDC_BUTTON6+i)->ShowWindow(SW_HIDE);
-	}
-	//
-}
-
-
-void CUpperCtrlDlg::OnBnClickedButton2()
-{
-	// TODO: 在此添加控件通知处理程序代码
-	m_SolidDlg.ShowWindow(SW_HIDE);
-	m_LiquidDlg.ShowWindow(SW_SHOW);
-	m_ParaSetDlg.ShowWindow(SW_HIDE);
-	m_CheckDlg.ShowWindow(SW_HIDE);
-	m_DataQueryDlg.ShowWindow(SW_HIDE);
-	//设置3个小按钮不可见
-	for (int i=0;i<3;i++)
-	{
-		(CButton*)GetDlgItem(IDC_BUTTON6+i)->ShowWindow(SW_HIDE);
-	}
-}
-
-
-void CUpperCtrlDlg::OnBnClickedButton3()
-{
-	// TODO: 在此添加控件通知处理程序代码
-	m_SolidDlg.ShowWindow(SW_HIDE);
-	m_LiquidDlg.ShowWindow(SW_HIDE);
-	m_ParaSetDlg.ShowWindow(SW_SHOW);
-	m_CheckDlg.ShowWindow(SW_HIDE);
-	m_DataQueryDlg.ShowWindow(SW_HIDE);
-	//设置3个小按钮不可见
-	for (int i=0;i<3;i++)
-	{
-		(CButton*)GetDlgItem(IDC_BUTTON6+i)->ShowWindow(SW_HIDE);
-	}
-}
-
-
-void CUpperCtrlDlg::OnBnClickedButton4()
-{
-	// TODO: 在此添加控件通知处理程序代码
-	m_SolidDlg.ShowWindow(SW_HIDE);
-	m_LiquidDlg.ShowWindow(SW_HIDE);
-	m_ParaSetDlg.ShowWindow(SW_HIDE);
-	m_CheckDlg.ShowWindow(SW_SHOW);
-	m_DataQueryDlg.ShowWindow(SW_HIDE);
-	//设置3个小按钮不可见
-	for (int i=0;i<3;i++)
-	{
-		(CButton*)GetDlgItem(IDC_BUTTON6+i)->ShowWindow(SW_HIDE);
-	}
-}
-
-
-void CUpperCtrlDlg::OnBnClickedButton5()
-{
-	// TODO: 在此添加控件通知处理程序代码
-	m_SolidDlg.ShowWindow(SW_HIDE);
-	m_LiquidDlg.ShowWindow(SW_HIDE);
-	m_ParaSetDlg.ShowWindow(SW_HIDE);
-	m_CheckDlg.ShowWindow(SW_HIDE);
-	m_DataQueryDlg.ShowWindow(SW_SHOW);
-	//设置3个小按钮不可见
-	for (int i=0;i<3;i++)
-	{
-		(CButton*)GetDlgItem(IDC_BUTTON6+i)->ShowWindow(SW_SHOW);
-	}
-}
-
-
 void CUpperCtrlDlg::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
@@ -353,4 +296,36 @@ void CUpperCtrlDlg::OnTimer(UINT_PTR nIDEvent)
 		GetDlgItem(IDC_STC_TIMER)->SetWindowText(str1+"\n"+str2);
 	}
 	CDialogEx::OnTimer(nIDEvent);
+}
+
+
+void CUpperCtrlDlg::OnBnClickedBtnDlg1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	m_SolidDlg.ShowWindow(SW_HIDE);
+	m_LiquidDlg.ShowWindow(SW_HIDE);
+	m_ParaSetDlg.ShowWindow(SW_SHOW);
+	m_CheckDlg.ShowWindow(SW_HIDE);
+	m_DataQueryDlg.ShowWindow(SW_HIDE);
+	//设置3个小按钮不可见
+	for (int i=0;i<3;i++)
+	{
+		(CButton*)GetDlgItem(IDC_BTN_DLG6+i)->ShowWindow(SW_HIDE);
+	}
+}
+
+
+void CUpperCtrlDlg::OnBnClickedBtnDlg5()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	m_SolidDlg.ShowWindow(SW_HIDE);
+	m_LiquidDlg.ShowWindow(SW_HIDE);
+	m_ParaSetDlg.ShowWindow(SW_HIDE);
+	m_CheckDlg.ShowWindow(SW_HIDE);
+	m_DataQueryDlg.ShowWindow(SW_SHOW);
+	//设置3个小按钮不可见
+	for (int i=0;i<3;i++)
+	{
+		(CButton*)GetDlgItem(IDC_BTN_DLG6+i)->ShowWindow(SW_SHOW);
+	}
 }
