@@ -11,6 +11,7 @@
 #include "ParaSetDlg.h"
 #include "DataQueryDlg.h"
 #include "SizeAdjust.h"
+#include "afxbutton.h"
 // CUpperCtrlDlg ¶Ô»°¿ò
 class CUpperCtrlDlg : public CDialogEx
 {
@@ -50,4 +51,13 @@ public:
 	CStatusBar  m_StausBar;
 	afx_msg void OnBnClickedBtnDlg1();
 	afx_msg void OnBnClickedBtnDlg5();
+protected:
+	afx_msg LRESULT OnSolidshow(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnLiquidshow(WPARAM wParam, LPARAM lParam);
+	virtual void OnCancel();
+public:
+	afx_msg void OnClose();
+	CProgressCtrl m_Progress;
+//	CImage m_Image;
+//	CMFCButton m_Btn1;
 };

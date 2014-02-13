@@ -39,11 +39,11 @@ CUpperCtrlApp theApp;
 
 BOOL CUpperCtrlApp::InitInstance()
 {
-	char CurPath[MAX_PATH]={0};
-	GetCurrentDirectoryA(MAX_PATH,CurPath);
-	strcat(CurPath,"\\Linker.smf");
-	VERIFY(1==InitSkinMagicLib(AfxGetInstanceHandle(), NULL, NULL, NULL));
-	VERIFY(1==LoadSkinFile(CurPath));
+// 	char CurPath[MAX_PATH]={0};
+// 	GetCurrentDirectoryA(MAX_PATH,CurPath);
+// 	strcat(CurPath,"\\Linker.smf");
+// 	VERIFY(1==InitSkinMagicLib(AfxGetInstanceHandle(), NULL, NULL, NULL));
+// 	VERIFY(1==LoadSkinFile(CurPath));
 	// 如果一个运行在 Windows XP 上的应用程序清单指定要
 	// 使用 ComCtl32.dll 版本 6 或更高版本来启用可视化方式，
 	//则需要 InitCommonControlsEx()。否则，将无法创建窗口。
@@ -74,11 +74,11 @@ BOOL CUpperCtrlApp::InitInstance()
 	// TODO: 应适当修改该字符串，
 	// 例如修改为公司或组织名
 	SetRegistryKey(_T("应用程序向导生成的本地应用程序"));
-
+	CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));     //这一句  
 	CUpperCtrlDlg dlg;
 	m_pMainWnd = &dlg;
-	VERIFY( 1 == SetWindowSkin( m_pMainWnd->m_hWnd , "MainFrame" ));
-	VERIFY( 1 == SetDialogSkin( "Dialog" ) );
+// 	VERIFY( 1 == SetWindowSkin( m_pMainWnd->m_hWnd , "MainFrame" ));
+// 	VERIFY( 1 == SetDialogSkin( "Dialog" ) );
 	INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == IDOK)
 	{

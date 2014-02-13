@@ -33,7 +33,12 @@
 
 #include <afxcontrolbars.h>     // 功能区和控件条的 MFC 支持
 
+//注册驱动用到
+//#define       WINVER  0x0501
 
+//自定义
+#include "user_type.h"
+#include "user_cfg.h"
 
 
 

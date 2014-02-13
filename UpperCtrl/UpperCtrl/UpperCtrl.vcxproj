@@ -19,7 +19,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v110_xp</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
     <UseOfMfc>Static</UseOfMfc>
   </PropertyGroup>
@@ -102,6 +102,8 @@
   <ItemGroup>
     <ClInclude Include="CheckDlg.h" />
     <ClInclude Include="DataQueryDlg.h" />
+    <ClInclude Include="devintf.h" />
+    <ClInclude Include="intrface.h" />
     <ClInclude Include="LiquidDlg.h" />
     <ClInclude Include="NewTabCtrl.h" />
     <ClInclude Include="ParaSetDlg.h" />
@@ -113,6 +115,10 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="UpperCtrl.h" />
     <ClInclude Include="UpperCtrlDlg.h" />
+    <ClInclude Include="usbdriver.h" />
+    <ClInclude Include="UserMsg.h" />
+    <ClInclude Include="user_cfg.h" />
+    <ClInclude Include="user_type.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CheckDlg.cpp" />
@@ -128,6 +134,7 @@
     </ClCompile>
     <ClCompile Include="UpperCtrl.cpp" />
     <ClCompile Include="UpperCtrlDlg.cpp" />
+    <ClCompile Include="usbdriver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="UpperCtrl.rc" />
@@ -137,7 +144,13 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\HD3025.ico" />
+    <Image Include="res\1.ico" />
+    <Image Include="res\2.ico" />
+    <Image Include="res\28.ico" />
+    <Image Include="res\3.ico" />
+    <Image Include="res\5.ico" />
     <Image Include="res\HD3025.ico" />
+    <Image Include="res\icon2.ico" />
     <Image Include="res\UpperCtrl.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
