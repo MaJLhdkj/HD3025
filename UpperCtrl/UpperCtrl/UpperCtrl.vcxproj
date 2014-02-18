@@ -145,10 +145,16 @@
   <ItemGroup>
     <Image Include="..\HD3025.ico" />
     <Image Include="res\1.ico" />
+    <Image Include="res\10.ico" />
+    <Image Include="res\11.ico" />
     <Image Include="res\2.ico" />
     <Image Include="res\28.ico" />
     <Image Include="res\3.ico" />
+    <Image Include="res\4.ico" />
     <Image Include="res\5.ico" />
+    <Image Include="res\6.ico" />
+    <Image Include="res\7.ico" />
+    <Image Include="res\9.ico" />
     <Image Include="res\HD3025.ico" />
     <Image Include="res\icon2.ico" />
     <Image Include="res\UpperCtrl.ico" />

@@ -60,4 +60,20 @@ public:
 	CProgressCtrl m_Progress;
 //	CImage m_Image;
 //	CMFCButton m_Btn1;
+	CMFCButton m_Btn_Dlg1;
+	CMFCButton m_Btn_Dlg2;
+	CMFCButton m_Btn_Dlg3;
+	CMFCButton m_Btn_Dlg4;
+	CMFCButton m_Btn_Dlg5;
+	CMFCButton m_Btn_Dlg6;
+//	CMFCButton m;
+	CMFCButton m_Btn_Dlg7;
+	CMFCButton m_Btn_Dlg8;
+	BOOL RegisterDevice(void);
+	BOOL CloseHD3025Device(void);
+	Uint8 ConnectHD3025(void);
+public:
+	InstrumentInfo m_InstrInfo[1];
+	BOOL OpenHD3025Device(void);
+	Uint8 WriteParameters(Uint8 Cmd);
 };
