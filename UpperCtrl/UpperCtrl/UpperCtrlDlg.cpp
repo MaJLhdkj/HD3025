@@ -16,6 +16,9 @@
 
 HANDLE m_cFD3025Device=INVALID_HANDLE_VALUE;		//设备的句柄
 GUID m_cUsbGuid=GUID_DEVINTERFACE_HD3025;		//打开设备的GUID
+const Uint8 UsbCmdFill[8]  = {0xaa,0xbb,0xcc,0xdd,0xee,0xff,0x00};
+DWORD dwDisControlTimes=0;//超时次数
+DWORD dwTimes24=0;
 CRect DlgRect;
 extern CRect TabCtrlRect;
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
@@ -57,8 +60,12 @@ CUpperCtrlDlg::CUpperCtrlDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CUpperCtrlDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-	//清空m_InstrInfo
-	memset(m_InstrInfo,0,sizeof(InstrumentInfo));
+	char CurrentPath[260];
+	memset(CurrentPath,0,260);
+	GetCurrentDirectory(260,CurrentPath);
+	m_DefaultPath = CurrentPath;
+	TRACE("m_DefaultPath is %s\r\n",CurrentPath);
+	m_strPath = _T("");
 }
 
 void CUpperCtrlDlg::DoDataExchange(CDataExchange* pDX)
@@ -76,6 +83,7 @@ void CUpperCtrlDlg::DoDataExchange(CDataExchange* pDX)
 	//  DDX_Control(pDX, IDC_BTN_DLG7, m);
 	DDX_Control(pDX, IDC_BTN_DLG7, m_Btn_Dlg7);
 	DDX_Control(pDX, IDC_BTN_DLG8, m_Btn_Dlg8);
+	DDX_Control(pDX, IDC_BTN_DLG9, m_Btn_Dlg9);
 }
 
 BEGIN_MESSAGE_MAP(CUpperCtrlDlg, CDialogEx)
@@ -90,6 +98,7 @@ BEGIN_MESSAGE_MAP(CUpperCtrlDlg, CDialogEx)
 	ON_MESSAGE(WM_SOLIDSHOW, &CUpperCtrlDlg::OnSolidshow)
 	ON_MESSAGE(WM_LIQUIDSHOW, &CUpperCtrlDlg::OnLiquidshow)
 	ON_WM_CLOSE()
+	ON_BN_CLICKED(IDC_BTN_DLG9, &CUpperCtrlDlg::OnBnClickedBtnDlg9)
 END_MESSAGE_MAP()
 
 
@@ -157,8 +166,8 @@ BOOL CUpperCtrlDlg::OnInitDialog()
 	}
 	m_DlgFont.Detach();
 
-	//初始化窗口时设置3个小按钮不可见
-	for (int i=0;i<3;i++)
+	//初始化窗口时设置4个小按钮不可见
+	for (int i=0;i<4;i++)
 	{
 		(CButton*)GetDlgItem(IDC_BTN_DLG6+i)->ShowWindow(SW_HIDE);
 	}
@@ -171,6 +180,7 @@ BOOL CUpperCtrlDlg::OnInitDialog()
 	m_Btn_Dlg6.SetIcon(LoadIcon(AfxGetResourceHandle(),MAKEINTRESOURCE(IDI_ICON5)));
 	m_Btn_Dlg7.SetIcon(LoadIcon(AfxGetResourceHandle(),MAKEINTRESOURCE(IDI_ICON6)));
 	m_Btn_Dlg8.SetIcon(LoadIcon(AfxGetResourceHandle(),MAKEINTRESOURCE(IDI_ICON7)));
+	m_Btn_Dlg9.SetIcon(LoadIcon(AfxGetResourceHandle(),MAKEINTRESOURCE(IDI_ICON12)));
 	//创建状态栏
 	m_StausBar.Create(this);
 	const UINT nIDS[4]={2016,2017,2018,2019};
@@ -188,7 +198,7 @@ BOOL CUpperCtrlDlg::OnInitDialog()
 	CString str=time.Format("%Y-%m-%d-%H:%M:%S");
 	m_StausBar.SetPaneText(3,str);
 	//设置一个定时器显示时间
-	SetTimer(2014,1000,NULL);
+	SetTimer(2014,1000,NULL);//ID=2014
 	//初始化进度条，并将其父窗口设为状态栏
 	m_Progress.SetRange(0,256);
 	m_Progress.SetPos(100);
@@ -298,6 +308,37 @@ void CUpperCtrlDlg::OnTimer(UINT_PTR nIDEvent)
 		CString str=time.Format("%Y-%m-%d-%H:%M:%S");
 		m_StausBar.SetPaneText(3,str);
 	}
+	else if (nIDEvent==3002)//待机超时检查定时到
+	{
+		Uint8 uResult=WriteParameters(USB_STANDARDBY_CMD);
+		if (uResult==USB_IN_CONTROL)
+		{
+			TRACE("待机通信正常!\r\n");
+			return;
+		}
+		else
+		{
+			TRACE("下位机未开启远程模式!\r\n");
+			dwDisControlTimes++;
+			TRACE("dwDisControlTimes=%d\r\n",dwDisControlTimes);
+			if (dwDisControlTimes>=10)
+			{
+				MessageBox("远程控制失败！请回到参数设置界面重新连接，并检查USB！");
+				dwDisControlTimes=0;
+				KillTimer(3002);
+				return;
+			}
+		}
+	}
+	else if(nIDEvent==3003)//24s检查
+	{
+		dwTimes24++;
+		TRACE("dwTimes24=%d\r\n",dwTimes24);
+		if (dwTimes24>=24)
+		{
+
+		}
+	}
 	CDialogEx::OnTimer(nIDEvent);
 }
 
@@ -311,7 +352,7 @@ void CUpperCtrlDlg::OnBnClickedBtnDlg1()
 	m_CheckDlg.ShowWindow(SW_HIDE);
 	m_DataQueryDlg.ShowWindow(SW_HIDE);
 	//设置3个小按钮不可见
-	for (int i=0;i<3;i++)
+	for (int i=0;i<4;i++)
 	{
 		(CButton*)GetDlgItem(IDC_BTN_DLG6+i)->ShowWindow(SW_HIDE);
 	}
@@ -331,6 +372,7 @@ void CUpperCtrlDlg::OnBnClickedBtnDlg5()
 	{
 		(CButton*)GetDlgItem(IDC_BTN_DLG6+i)->ShowWindow(SW_SHOW);
 	}
+	(CButton*)GetDlgItem(IDC_BTN_DLG9)->ShowWindow(SW_HIDE);
 }
 
 afx_msg LRESULT CUpperCtrlDlg::OnSolidshow(WPARAM wParam, LPARAM lParam)
@@ -340,6 +382,7 @@ afx_msg LRESULT CUpperCtrlDlg::OnSolidshow(WPARAM wParam, LPARAM lParam)
 	m_ParaSetDlg.ShowWindow(SW_HIDE);
 	m_CheckDlg.ShowWindow(SW_HIDE);
 	m_DataQueryDlg.ShowWindow(SW_HIDE);
+	(CButton*)GetDlgItem(IDC_BTN_DLG9)->ShowWindow(SW_SHOW);
 	return 0;
 }
 
@@ -351,6 +394,7 @@ afx_msg LRESULT CUpperCtrlDlg::OnLiquidshow(WPARAM wParam, LPARAM lParam)
 	m_ParaSetDlg.ShowWindow(SW_HIDE);
 	m_CheckDlg.ShowWindow(SW_HIDE);
 	m_DataQueryDlg.ShowWindow(SW_HIDE);
+	(CButton*)GetDlgItem(IDC_BTN_DLG9)->ShowWindow(SW_SHOW);
 	return 0;
 }
 
@@ -416,36 +460,38 @@ BOOL CUpperCtrlDlg::CloseHD3025Device(void)
 	}
 }
 
-
-Uint8 CUpperCtrlDlg::ConnectHD3025(void)
+//const Uint8 UsbCmdFill[8]  = {0xaa,0xbb,0xcc,0xdd,0xee,0xff,0x00};
+Uint8 CUpperCtrlDlg::ConnectHD3025(HSProtocal *HsP)
 {
+	DWORD dwReturned;
 	if (OpenHD3025Device())
 	{
 		TRACE("OpenHD3025Device 成功...\r\n");
-		//此处添加获取设备中数据存储信息给strDeviceInformation
-		if (WriteParameters(USB_LINK_CMD) != ERROR)
+		HSProtocal Protocal[1];
+		memset(&Protocal[0],0,sizeof(HSProtocal));//清0
+		Protocal[0].Cmd=USB_LINK_CMD;
+		Protocal[0].CmdPar[0]=0xaa;
+		Protocal[0].CmdPar[1]=0xbb;
+		Protocal[0].CmdPar[2]=0xcc;
+		Protocal[0].CmdPar[3]=0xdd;
+		Protocal[0].CmdPar[4]=0xee;
+		Protocal[0].CmdPar[5]=0xff;
+		Protocal[0].CmdPar[6]=0x00;
+		if (WriteDataCode(m_cFD3025Device,EP2_WRITE,&Protocal[0],sizeof(HSProtocal),NULL,0,&dwReturned,NULL))
 		{
-			TRACE("WriteParameters 成功...\r\n");
-			ULONG BytesReturned;
-			//使用IoControl往端点2发送8字节数据
-			if (ReadDataCode(m_cFD3025Device,EP2_READ,NULL,0,m_InstrInfo,6,&BytesReturned,NULL))
+			if (ReadDataCode(m_cFD3025Device,EP2_READ,NULL,0,HsP,sizeof(HSProtocal),&dwReturned,NULL))
 			{
-				return USB_IN_CONTROL;
+				//如果CmdPar都按位取反的化，
+				if ((*HsP).CmdPar[0]==0xbb)
+				{
+						return USB_IN_CONTROL;
+				}
+				return USB_IN_CONNECT;
 			}
-			TRACE("下位机未开启远程控制模式\r\n");
 			return USB_IN_CONNECT;
-		} 
-		else
-		{
-			TRACE("WriteParameters 失败 ...\r\n");
-			return ERROR;
 		}
-	} 
-	else
-	{
-		TRACE("OpenHD3025Device 失败...\r\n");
-		return ERROR;
 	}
+	return ERROR;
 }
 
 
@@ -478,7 +524,7 @@ BOOL CUpperCtrlDlg::OpenHD3025Device(void)
 	}
 }
 
-const Uint8 UsbCmdFill[8]  = {0xaa,0xbb,0xcc,0xdd,0xee,0xff,0x00};
+
 Uint8 CUpperCtrlDlg::WriteParameters(Uint8 Cmd)
 {
 	ULONG BytesReturned;
@@ -506,4 +552,32 @@ Uint8 CUpperCtrlDlg::WriteParameters(Uint8 Cmd)
 		}
 	}
 	return ERROR;
+}
+
+
+void CUpperCtrlDlg::OnBnClickedBtnDlg9()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CTime time;
+	time=CTime::GetCurrentTime();
+	CString str_FileName=time.Format("%Y-%m-%d-%H-%M-%S");
+	CFileDialog filedlg(FALSE,_T(".txt"),str_FileName,OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,_T("文本文档(.txt)|*.txt||"),this);
+	if (filedlg.DoModal()==IDOK)
+	{
+		m_strPath=filedlg.GetPathName();
+		TRACE("m_strPath is %s\r\n",m_strPath);
+		HANDLE hFile=::CreateFile(m_strPath,
+			GENERIC_READ|GENERIC_WRITE,
+			FILE_SHARE_READ,
+			NULL,
+			CREATE_NEW,
+			FILE_ATTRIBUTE_NORMAL,
+			NULL);
+		if (hFile==INVALID_HANDLE_VALUE)
+		{
+			MessageBox("创建文本文档失败");
+			TRACE("LastError is 0x%x\r\n",GetLastError());
+		}
+		::CloseHandle(hFile);
+	}
 }

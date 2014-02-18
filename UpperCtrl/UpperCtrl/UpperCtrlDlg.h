@@ -71,9 +71,13 @@ public:
 	CMFCButton m_Btn_Dlg8;
 	BOOL RegisterDevice(void);
 	BOOL CloseHD3025Device(void);
-	Uint8 ConnectHD3025(void);
+	Uint8 ConnectHD3025(HSProtocal *HsP);
 public:
-	InstrumentInfo m_InstrInfo[1];
+//	HSProtocal m_Protocal[1];
 	BOOL OpenHD3025Device(void);
 	Uint8 WriteParameters(Uint8 Cmd);
+	CMFCButton m_Btn_Dlg9;
+	CString m_DefaultPath;
+	CString m_strPath;
+	afx_msg void OnBnClickedBtnDlg9();
 };
